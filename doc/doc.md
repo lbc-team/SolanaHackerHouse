@@ -83,14 +83,13 @@ solana logs DKtPpFnJoMn6qUFiPxWN61DJqFqPpYoGShrwaG2QJfRx
 
 ### 释放合约
 
-部署合约较耗 SOL，用于合约的存储费用。
-如果合约不再使用，可以用命令释放掉合约，指定接收人，支付的 SOL 就会返还。
+部署合约非常消耗 SOL，这些 SOL 作为合约的存储费用。
+如果合约不再使用，可以用命令释放掉合约，可以指定接收地址，支付的 SOL 就会返还。
 
 ```shell
 solana program close
-```
+# .....
 
-```shell
 solana program close  --buffers
 
 Buffer Address                               | Authority                                    | Balance
@@ -100,17 +99,40 @@ HczChndCYcydwemUsNqePGZzE139NnoVbnWZ6d8PQudE | HxJHFKt8nFxmXL8HVnD84YJFrsZmHC1ux
 8q9B696b3ZWVNTuikNsrwBfXRnew3hcqoKiBGzeD4uz9 | HxJHFKt8nFxmXL8HVnD84YJFrsZmHC1ux9fgwm2awkS8 | 0.2798268 SOL
 ```
 
-## 地址基本概念
+## Solana 地址
+
+Solana 上有三种类型的账户：
+
+- 数据帐户 - 就是用来存储数据的
+- 程序帐户 - 存储可执行程序（又称智能合约）的地方
+- 原生账户 - 用于核心区块链功能，例如权益和投票的账户
+
+### 原生账户
+
+原生账户是个固定的地址，地址是 `11111111111111111111111111111111`。
+
+```js
+export class SystemProgram {
+
+  static programId: PublicKey = new PublicKey(
+    '11111111111111111111111111111111',
+  );
+}
+```
+
+更多内容请看：https://solana-labs.github.io/solana-web3.js/classes/SystemProgram.html
 
 ### PDA 地址
 
-PDA = Program Derived Addresses 程序派生地址
+PDA = Program Derived Addresses，程序派生地址。
 
-PDA 是一种特殊类型的账户，但是它们不是真正的账户。它们只是一种特殊的地址，由程序控制，而不是私钥。这意味着它们不是真正的账户，因为它们没有私钥，因此无法对其进行签名。
+PDA 是一种特殊类型的账户，它们只是一种特殊的地址，不是真正的账户。它们由程序控制，而不是私钥。因为 PDA 没有私钥，因此无法对其进行签名。
 
 ![](./pda.jpg)
 
-普通的 Solana 账户是使用 Ed25519 签名系统创建的，而 PDA 由程序控制，因此它们不需要私钥。因此，我们使用不在 Ed25519 曲线上的地址来制作 PDA。
+普通的 Solana 账户是由 [Ed25519](https://ed25519.cr.yp.to/) 签名系统创建的，而 PDA 由程序控制。因此，我们使用不在 Ed25519 曲线上的地址来制作 PDA。
+
+Polkadot 也使用了 Ed25519 算法生成地址。
 
 ![](./ed25519.jpg)
 
@@ -118,25 +140,35 @@ PDA 是一种特殊类型的账户，但是它们不是真正的账户。它们�
 
 **每个账户有 10 Mb 的限制。**
 
+#### findProgramAddressSync
+
+我们可以通过 `findProgramAddressSync` 查找 PDA。
+
 ```js
-// 用于全局状态的示例
-const [pda, bump] = await PublicKey.findProgramAddress(
-  [Buffer.from("GLOBAL_STATE")],
-  programId
-);
-
-// 为每个用户存储单独计数器的示例
-const [pda, bump] = await PublicKey.findProgramAddress(
-  [publickey.toBuffer()],
-  programId
-);
-
-// 创建链上笔记系统，每个用户都可以存储自己的笔记的示例
-const [pda, bump] = await PublicKey.findProgramAddress(
-  [publickey.toBuffer(), Buffer.from("First Note")],
-  programId
-);
+static findProgramAddressSync(
+  seeds: Array<Buffer | Uint8Array>,
+  programId: PublicKey,
+): [PublicKey, number] {
+  let nonce = 255;
+  let address;
+  while (nonce != 0) {
+    try {
+      const seedsWithNonce = seeds.concat(Buffer.from([nonce]));
+      address = this.createProgramAddressSync(seedsWithNonce, programId);
+    } catch (err) {
+      if (err instanceof TypeError) {
+        throw err;
+      }
+      nonce--;
+      continue;
+    }
+    return [address, nonce];
+  }
+  throw new Error(`Unable to find a viable program address nonce`);
+}
 ```
+
+更多内容请看：https://solana-labs.github.io/solana-web3.js/classes/PublicKey.html#findProgramAddressSync
 
 ## 工具
 
