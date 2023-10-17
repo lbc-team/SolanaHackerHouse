@@ -1,20 +1,23 @@
 
 ## Solana
 
-### Solana Explorer
-
 Solana 有 4 个网络：
+- 主网：正式环境
+- 测试网：主要给 DApp 开发者使用，相对稳定
+- 开发网：为 Solana 节点开发使用，更新频繁
+- 本地：本地运行环境
 
-- mainnet
-- testnet
-- devnet
-- localhost
+官方 RPC 地址分别是：
+- MainNet: https://api.mainnet-beta.solana.com
+- TestNet: https://api.testnet.solana.com
+- DevNet: https://api.devnet.solana.com
+- Localhost: http://localhost:8899
+
+### Solana Explorer
 
 https://explorer.solana.com/
 
-### RPC
-
-https://docs.solana.com/api/http
+https://solscan.io/
 
 ### 安装 Rust 和 Solana CLI
 
@@ -45,7 +48,12 @@ https://docs.solana.com/cli/install-solana-cli-tools
 ```shell
 solana-keygen new -o ./solana/id.json # 生成地址
 
+solana-keygen pubkey # 查看公钥
+
 solana address # 查看地址
+
+solana address -k ./solana/id.json # 私钥转为地址
+# DLQQhHTBBeY7gGVwXE4vG8vCKCvJKBJZbCcKfbcQSWm9
 
 solana balance # 查询余额
 ```
@@ -53,6 +61,8 @@ solana balance # 查询余额
 #### 配置
 
 ```shell
+solana config set  --keypair ./solana/id.json
+
 solana config set --url localhost # 设定 rpc 为本地环境
 solana config set --url devnet # 设定 rpc 为开发环境
 
@@ -76,6 +86,7 @@ solana airdrop 1 # 每次不要请求太多数量，时间不要太频繁
 ```shell
 solana transfer <address>  1
 solana transfer --allow-unfunded-recipient <address> 1
+# 如果这个账号第一次使用，需要添加 --allow-unfunded-recipient
 ```
 
 #### 部署合约
@@ -92,6 +103,12 @@ solana program deploy <path>
 solana logs <PROGRAM_ID>
 
 solana logs DKtPpFnJoMn6qUFiPxWN61DJqFqPpYoGShrwaG2QJfRx
+```
+
+#### 查看交易 hash
+
+```
+solana confirm -v NrqBoD2kiC8tAkFZh1Ya3sryHDhUVczQr3N6Rcf2hTtenVdBJRp3niiqqPapP2kt5S1EW479UoxEEdFL3N5xGkz
 ```
 
 ### 释放合约
@@ -113,11 +130,11 @@ HczChndCYcydwemUsNqePGZzE139NnoVbnWZ6d8PQudE | HxJHFKt8nFxmXL8HVnD84YJFrsZmHC1ux
 ```
 ## Solana 地址
 
-Solana 上有三种类型的账户：
+Solana 上有三种类型的账户地址：
 
-- 数据帐户 - 就是用来存储数据的
-- 程序帐户 - 存储可执行程序（又称智能合约）的地方
-- 原生账户 - 用于核心区块链功能，例如权益和投票的账户
+- 数据帐户地址 - 就是用来存储数据的
+- 程序帐户地址 - 存储可执行程序（又称智能合约）的地方
+- 原生账户地址 - 用于核心区块链功能，例如权益和投票的账户
 
 ### 原生账户
 
@@ -125,7 +142,6 @@ Solana 上有三种类型的账户：
 
 ```js
 export class SystemProgram {
-
   static programId: PublicKey = new PublicKey(
     '11111111111111111111111111111111',
   );
@@ -150,7 +166,7 @@ Polkadot 也使用了 Ed25519 算法生成地址。
 
 它提供了链上和链下程序确定性地定位数据的方法。可以将其视为一个键值存储，其中 seeds、programId 和 bump 结合形成密钥，以及网络在该地址上存储的值。
 
-**每个账户有 10 Mb 的限制。**
+**每个账户有 10 Mb 限制。**
 
 #### findProgramAddressSync
 
@@ -184,4 +200,14 @@ static findProgramAddressSync(
 
 ## 在线 IDE
 
+https://beta.solpg.io/
+
 https://github.com/solana-playground/solana-playground
+
+## SPL
+
+SPL = Solana Program Library
+
+https://spl-token-faucet.com/
+
+https://github.com/solana-labs/solana-program-library
