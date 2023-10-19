@@ -24,7 +24,7 @@ https://solscan.io/
 ```shell
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-sh -c "$(curl -sSfL https://release.solana.com/v1.16.14/install)"
+sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
 ```
 
 查看版本
