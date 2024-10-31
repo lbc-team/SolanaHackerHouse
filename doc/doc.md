@@ -107,7 +107,7 @@ solana logs DKtPpFnJoMn6qUFiPxWN61DJqFqPpYoGShrwaG2QJfRx
 
 #### 查看交易 hash
 
-```
+```sh
 solana confirm -v NrqBoD2kiC8tAkFZh1Ya3sryHDhUVczQr3N6Rcf2hTtenVdBJRp3niiqqPapP2kt5S1EW479UoxEEdFL3N5xGkz
 ```
 
@@ -117,8 +117,10 @@ solana confirm -v NrqBoD2kiC8tAkFZh1Ya3sryHDhUVczQr3N6Rcf2hTtenVdBJRp3niiqqPapP2
 如果合约不再使用，可以用命令释放掉合约，可以指定接收地址，支付的 SOL 就会返还。
 
 ```shell
+solana program close --bypass-warning <contract address>
 solana program close <contract address>
-# .....
+
+# ...
 
 solana program close --buffers #批量回收
 
@@ -128,6 +130,7 @@ HczChndCYcydwemUsNqePGZzE139NnoVbnWZ6d8PQudE | HxJHFKt8nFxmXL8HVnD84YJFrsZmHC1ux
 9PWdoUoZ2q76x7dZCWUqoabnpmGdEAh5xp5ub1bV9Pz5 | HxJHFKt8nFxmXL8HVnD84YJFrsZmHC1ux9fgwm2awkS8 | 0.2798268 SOL
 8q9B696b3ZWVNTuikNsrwBfXRnew3hcqoKiBGzeD4uz9 | HxJHFKt8nFxmXL8HVnD84YJFrsZmHC1ux9fgwm2awkS8 | 0.2798268 SOL
 ```
+
 ## Solana 地址
 
 Solana 上有三种类型的账户地址：
